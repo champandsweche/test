@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Форма</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f7f7f7;
+    }
+
+    label, select {
+      display: block;
+      margin: 10px 0;
+    }
+
+    button {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <label for="city">Город:</label>
+    <select id="city" onchange="updateWorkshops()">
+      <option value="">Выберите город</option>
+      <option value="cityA">Город A</option>
+      <option value="cityB">Город B</option>
+      <option value="cityC">Город C</option>
+    </select>
+    <br>
+
+    <label for="workshop">Цех:</label>
+    <select id="workshop" onchange="updateEmployees()" disabled>
+      <option value="">Выберите цех</option>
+    </select>
+    <br>
+
+    <label for="employee">Сотрудник:</label>
+    <select id="employee" disabled>
+      <option value="">Выберите сотрудника</option>
+    </select>
+    <br>
+
+    <label for="shift">Смена:</label>
+    <span id="shiftText">Дневная смена</span>
+    <br>
+
+    <button type="button" onclick="submitForm()">Записать</button>
+  </form>
+
+  <script>
+    const workshopsByCity = {
+      cityA: ["Цех A", "Цех A2", "Цех A3"],
+      cityB: ["Цех B", "Цех B2"],
+      cityC: ["Цех C", "Цех C1", "Цех C2"],
+    };
+
+    const employeesByWorkshop = {
+      "Цех A": ["Сотрудник цеха A №1", "Сотрудник цеха A №2", "Сотрудник цеха A №3"],
+      "Цех A2": ["Сотрудник цеха A2 №1", "Сотрудник цеха A2 №2"],
+      "Цех A3": ["Сотрудник цеха A3 №1", "Сотрудник цеха A3 №2", "Сотрудник цеха A3 №3"],
+      "Цех B": ["Сотрудник цеха B №1", "Сотрудник цеха B №2"],
+      "Цех B2": ["Сотрудник цеха B2 №1", "Сотрудник цеха B2 №2", "Сотрудник цеха B2 №3"],
+      "Цех C": ["Сотрудник цеха С №1", "Сотрудник цеха С №2"],
+      "Цех C1": ["Сотрудник цеха С1 №1", "Сотрудник цеха С2 №2"],
+      "Цех C2": ["Сотрудник цеха С2 №1", "Сотрудник цеха С2 №2", "Сотрудник цеха С2 №3"],
+    };
+
+    function updateWorkshops() {
+      const citySelect = document.getElementById("city");
+      const workshopSelect = document.getElementById("workshop");
+      const selectedCity = citySelect.value;
+
+      workshopSelect.innerHTML = "";
+
+      if (selectedCity) {
+        workshopsByCity[selectedCity].forEach(workshop => {
+          const option = document.createElement("option");
+          option.value = workshop;
+          option.text = workshop;
+          workshopSelect.appendChild(option);
+        });
+
+        workshopSelect.disabled = false;
+        updateEmployees();
+      } else {
+        workshopSelect.disabled = true;
+      }
+    }
+
+    function updateEmployees() {
+      const workshopSelect = document.getElementById("workshop");
+      const employeeSelect = document.getElementById("employee");
+      const selectedWorkshop = workshopSelect.value;
+
+      employeeSelect.innerHTML = "";
+
+      if (selectedWorkshop) {
+        employeesByWorkshop[selectedWorkshop].forEach(employee => {
+          const option = document.createElement("option");
+          option.value = employee;
+          option.text = employee;
+          employeeSelect.appendChild(option);
+        });
+
+        employeeSelect.disabled = false;
+      } else {
+        employeeSelect.disabled = true;
+      }
+    }
+
+    function submitForm() {
+      const citySelect = document.getElementById("city");
+      const workshopSelect = document.getElementById("workshop");
+      const employeeSelect = document.getElementById("employee");
+
+      const selectedCity = citySelect.value;
+      const selectedWorkshop = workshopSelect.value;
+      const selectedEmployee = employeeSelect.value;
+
+      const shiftText = document.getElementById("shiftText").textContent;
+
+      const message = `В городе ${selectedCity} на цехе ${selectedWorkshop} сотрудник ${selectedEmployee} был записан на ${shiftText}.`;
+
+      alert(message);
+    }
+
+    const currentTimeInMoscow = new Date().toLocaleString("en-US", { timeZone: "Europe/Moscow" });
+    const currentHour = new Date(currentTimeInMoscow).getHours();
+
+    if (currentHour >= 20 || currentHour < 8) {
+      document.getElementById("shiftText").textContent = "Ночная смена";
+    } else {
+      document.getElementById("shiftText").textContent = "Дневная смена";
+    }
+
+    updateWorkshops();
+  </script>
+</body>
+</html>
